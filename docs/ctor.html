@@ -1,0 +1,83 @@
+<!DOCTYPE html>  <html> <head>   <title>ctor.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               ctor.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <pre><code>Ctor.js 0.1.0
+Copyright (c) 2012 Todd Lucas
+Ctor may be freely distributed under the MIT license.
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h2>Setup</h2>             </td>             <td class="code">               <div class="highlight"><pre>
+
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">previous</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">Ctor</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">Ctor</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">Ctor</span> <span class="o">=</span> <span class="p">{};</span>
+
+    <span class="nx">Ctor</span><span class="p">.</span><span class="nx">VERSION</span> <span class="o">=</span> <span class="s1">&#39;0.1.0&#39;</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">deriving</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Run Ctor.js in <em>noConflict</em> mode, returning the <code>Ctor</code> variable to its
+previous owner. Returns a reference to the Ctor object.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+    <span class="nx">Ctor</span><span class="p">.</span><span class="nx">noConflict</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">root</span><span class="p">.</span><span class="nx">Ctor</span> <span class="o">=</span> <span class="nx">previous</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Copy any source properties to the destination.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">extend</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dst</span><span class="p">,</span> <span class="nx">src</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">prop</span> <span class="k">in</span> <span class="nx">src</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">src</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">!==</span> <span class="k">void</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">dst</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">src</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h2>Ctor.derive</h2>             </td>             <td class="code">               <div class="highlight"><pre>
+
+</pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Ctor implements pseudo-classical inheritance using JavaScript
+prototypal inheritance, while preserving the native JavaScript
+constructor pattern. Classical constructors are implemented
+using the <code>init</code> method.</p>
+
+<p>The constructor function must invoke <code>this.ctor</code> with the 
+<code>arguments</code> object in order to invoke the <code>init</code> chain.
+The base class in a class hierarchy must derive from Object.</p>
+
+<pre><code> function MyBase () {
+     this.ctor(arguments);
+ }
+
+ Ctor.derive(MyBase, Object, {
+     init: function(arg1, arg2) {
+         // This will be defined on all instances of 
+         // MyBase or any derived types.
+         this.instanceProperty = arg1;
+     }
+ });
+</code></pre>
+
+<p>The <code>init</code> method is optional and should be defined in the
+prototope extensions. Instance properties and methods should
+be initialized within <code>init</code> and prototype properties and
+methods may be added to the extensions object.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+    <span class="nx">Ctor</span><span class="p">.</span><span class="nx">derive</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">derived</span><span class="p">,</span> <span class="nx">base</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">statics</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">deriving</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">base</span><span class="p">();</span>
+        <span class="nx">deriving</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">extensions</span><span class="p">)</span> <span class="nx">extend</span><span class="p">(</span><span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">statics</span><span class="p">)</span> <span class="nx">extend</span><span class="p">(</span><span class="nx">derived</span><span class="p">,</span> <span class="nx">statics</span><span class="p">);</span>
+
+        <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">derived</span><span class="p">;</span>
+
+        <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">ctor</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">deriving</span><span class="p">)</span>
+                <span class="k">return</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">base</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;ctor&#39;</span><span class="p">))</span>
+                <span class="nx">base</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">ctor</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">))</span>
+                <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+        <span class="p">};</span>
+    <span class="p">};</span>
+<span class="p">})();</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
