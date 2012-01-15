@@ -58,6 +58,8 @@ prototope extensions. Instance properties and methods should
 be initialized within <code>init</code> and prototype properties and
 methods may be added to the extensions object.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">Ctor</span><span class="p">.</span><span class="nx">derive</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">derived</span><span class="p">,</span> <span class="nx">base</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">statics</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">previous</span> <span class="o">=</span> <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+
         <span class="nx">deriving</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">base</span><span class="p">();</span>
         <span class="nx">deriving</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
@@ -65,7 +67,10 @@ methods may be added to the extensions object.</p>             </td>            
         <span class="k">if</span> <span class="p">(</span><span class="nx">extensions</span><span class="p">)</span> <span class="nx">extend</span><span class="p">(</span><span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">statics</span><span class="p">)</span> <span class="nx">extend</span><span class="p">(</span><span class="nx">derived</span><span class="p">,</span> <span class="nx">statics</span><span class="p">);</span>
 
-        <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">derived</span><span class="p">;</span>
+        <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">derived</span><span class="p">;</span> <span class="c1">// Restore standard function properties.</span>
+        <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="nx">previous</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+        <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">base</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span> <span class="c1">// Retain a reference to the base prototype.</span>
 
         <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">ctor</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">deriving</span><span class="p">)</span>
