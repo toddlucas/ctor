@@ -61,6 +61,8 @@
     // methods may be added to the extensions object.
     //
     Ctor.derive = function (derived, base, extensions, statics) {
+        var previous = derived.prototype;
+
         deriving = true;
         derived.prototype = new base();
         deriving = false;
@@ -68,7 +70,10 @@
         if (extensions) extend(derived.prototype, extensions);
         if (statics) extend(derived, statics);
 
-        derived.prototype.constructor = derived;
+        derived.prototype.constructor = derived; // Restore standard function properties.
+        derived.prototype.length = previous.length;
+
+        derived.prototype.base = base.prototype; // Retain a reference to the base prototype.
 
         derived.prototype.ctor = function (args) {
             if (deriving)
