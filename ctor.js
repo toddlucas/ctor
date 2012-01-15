@@ -55,6 +55,8 @@
     //          }
     //      });
     //
+    //      var b = new MyBase('arg1', 'arg2');
+    //
     // The `init` method is optional and should be defined in the
     // prototope extensions. Instance properties and methods should
     // be initialized within `init` and prototype properties and
@@ -69,11 +71,14 @@
 
         if (extensions) extend(derived.prototype, extensions);
         if (statics) extend(derived, statics);
+        
+        var optional = true;    // Using an object instance as a prototype causes the loss of 
+        if (optional) {         // such non-standard properties as: caller, arguments, and name.
+            derived.prototype.constructor = derived; // Restore standard function properties.
+            derived.prototype.length = previous.length;
 
-        derived.prototype.constructor = derived; // Restore standard function properties.
-        derived.prototype.length = previous.length;
-
-        derived.prototype.base = base.prototype; // Retain a reference to the base prototype.
+            derived.prototype.base = base.prototype; // Retain a reference to the base object prototype.
+        }
 
         derived.prototype.ctor = function (args) {
             if (deriving)
@@ -85,5 +90,28 @@
             if (derived.prototype.hasOwnProperty('init'))
                 derived.prototype.init.apply(this, args);
         };
+    };
+
+    // Ctor.inherit
+    // ------------
+
+    // This simplified inheritance function may be used when a custom 
+    // JavaScript constructor isn't needed.
+    //
+    //     var MyDerived = Ctor.inherit(MyBase, {
+    //         init: function() {
+    //         }
+    //     });
+    //
+    //     var d = new MyDerived('arg1', 'arg2');
+    //
+    Ctor.inherit = function (base, extensions, statics) {
+        var derived = function () {
+            this.ctor(arguments);
+        };
+
+        Ctor.derive(derived, base, extensions, statics);
+
+        return derived;
     };
 })();

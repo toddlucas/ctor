@@ -51,6 +51,8 @@ The base class in a class hierarchy must derive from Object.</p>
          this.instanceProperty = arg1;
      }
  });
+
+ var b = new MyBase('arg1', 'arg2');
 </code></pre>
 
 <p>The <code>init</code> method is optional and should be defined in the
@@ -66,11 +68,14 @@ methods may be added to the extensions object.</p>             </td>            
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">extensions</span><span class="p">)</span> <span class="nx">extend</span><span class="p">(</span><span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">statics</span><span class="p">)</span> <span class="nx">extend</span><span class="p">(</span><span class="nx">derived</span><span class="p">,</span> <span class="nx">statics</span><span class="p">);</span>
+        
+        <span class="kd">var</span> <span class="nx">optional</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>    <span class="c1">// Using an object instance as a prototype causes the loss of </span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">optional</span><span class="p">)</span> <span class="p">{</span>         <span class="c1">// such non-standard properties as: caller, arguments, and name.</span>
+            <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">derived</span><span class="p">;</span> <span class="c1">// Restore standard function properties.</span>
+            <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="nx">previous</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
-        <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">derived</span><span class="p">;</span> <span class="c1">// Restore standard function properties.</span>
-        <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="nx">previous</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-
-        <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">base</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span> <span class="c1">// Retain a reference to the base prototype.</span>
+            <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">base</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span> <span class="c1">// Retain a reference to the base object prototype.</span>
+        <span class="p">}</span>
 
         <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">ctor</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">deriving</span><span class="p">)</span>
@@ -82,6 +87,28 @@ methods may be added to the extensions object.</p>             </td>            
             <span class="k">if</span> <span class="p">(</span><span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">))</span>
                 <span class="nx">derived</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
         <span class="p">};</span>
+    <span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h2>Ctor.inherit</h2>             </td>             <td class="code">               <div class="highlight"><pre>
+
+</pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>This simplified inheritance function may be used when a custom 
+JavaScript constructor isn't needed.</p>
+
+<pre><code>var MyDerived = Ctor.inherit(MyBase, {
+    init: function() {
+    }
+});
+
+var d = new MyDerived('arg1', 'arg2');
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>
+    <span class="nx">Ctor</span><span class="p">.</span><span class="nx">inherit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">base</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">statics</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">derived</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">ctor</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">};</span>
+
+        <span class="nx">Ctor</span><span class="p">.</span><span class="nx">derive</span><span class="p">(</span><span class="nx">derived</span><span class="p">,</span> <span class="nx">base</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">statics</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">derived</span><span class="p">;</span>
     <span class="p">};</span>
 <span class="p">})();</span>
 
